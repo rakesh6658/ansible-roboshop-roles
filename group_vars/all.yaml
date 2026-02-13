@@ -5,3 +5,5 @@ MYSQL_HOST: mysql.joindevops.online
 CART_HOST: cart.joindevops.online
 RABBITMQ_HOST: rabbitmq.joindevops.online
 USER_HOST: user.joindevops.online
+SHIPPING_HOST: shipping.joindevops.online
+PAYMENT_HOST: payment.joindevops.online

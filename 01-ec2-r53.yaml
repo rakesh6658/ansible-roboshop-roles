@@ -1,0 +1,49 @@
+- name: creating ec2 instances
+  hosts: localhost
+  connection: local
+  vars:
+   AMI_ID: ami-0220d79f3f480ecf5
+   sg_id: sg-09ab53948daadc429
+   HOSTED_ZONE_ID: "Z01170992B3XLBKODT7HI"
+   domain_name: joindevops.online
+   instances:
+    
+  tasks:
+  - name: creating ec2-instances
+    amazon.aws.ec2_instance:
+        instance_type: t3.micro
+        image_id: "{{AMI_ID}}" # Replace with a valid AMI ID for your region
+        
+        
+        security_group: "{{sg_id}}" # Or the name of your security group
+        wait: true
+        tags:
+          Name: "{{item}}"
+    loop: "{{instances}}"   
+    register: ec2_info
+  - name: printing the output 
+    ansible.builtin.debug:
+     msg: "{{ec2_info.results[0].instances[0].private_ip_address}}" 
+  - name: Create or update a Route 53 A record
+    amazon.aws.route53:
+     zone: "{{domain_name}}"
+     record: "{{item.item}}.{{domain_name}}"
+     type: A
+     value: "{{item.instances[0].private_ip_address}}"
+     state: present
+     ttl: 1
+     overwrite: true # Overwrite if the record already exists with different values
+    loop: "{{ec2_info.results}}"  
+  - name: Create or update a Route 53 A record
+    amazon.aws.route53:
+     zone: "{{domain_name}}"
+     record: "{{item.item}}.{{domain_name}}"
+     type: A
+     value: "{{item.instances[0].public_ip_address}}"
+     state: present
+     ttl: 1
+     overwrite: true # Overwrite if the record already exists with different values
+    loop: "{{ec2_info.results}}"
+    when: item.item == "frontend"    
+
+     

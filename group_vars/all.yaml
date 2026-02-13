@@ -1,3 +1,5 @@
 MONGODB_HOST: mongodb.joindevops.online
 REDIS_HOST: redis.joindevops.online
 CATALOGUE_HOST: catalogue.joindevops.online
+MYSQL_HOST: mysql.joindevops.online
+CART_HOST: cart.joindevops.online
